@@ -1,0 +1,35 @@
+name: Deploy Quelpoke to Kubernetes
+
+on:
+  push:
+    branches:
+      - main  # Déploie automatiquement après un push sur `main`
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout du code
+      uses: actions/checkout@v3
+
+    - name: Authentifier Google Cloud
+      run: echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > gcloud-key.json
+
+    - name: Configurer gcloud CLI
+      run: |
+        gcloud auth activate-service-account --key-file=gcloud-key.json
+        gcloud config set project cs-poc-hpzdycpiqjyvinhrczvlwcn
+        gcloud auth configure-docker europe-west9-docker.pkg.dev
+
+    - name: Construire et Pousser l’image Docker sur Google Artifact Registry
+      run: |
+        IMAGE_NAME=europe-west9-docker.pkg.dev/cs-poc-hpzdycpiqjyvinhrczvlwcn/student-hugof/quelpoke:latest
+        docker build -t $IMAGE_NAME .
+        docker push $IMAGE_NAME
+
+    - name: Déployer sur Kubernetes
+      run: |
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
+        export KUBECONFIG=kubeconfig.yaml
+        kubectl apply -f kube.yaml
