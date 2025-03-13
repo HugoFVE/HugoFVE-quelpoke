@@ -15,11 +15,11 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Authentifier Google Cloud
-      run: echo "${{ secrets.GCR_JSON_KEY }}" > gcloud-key.json
+      run: echo "${{ secrets.GCR_JSON_KEY }}" > keyfile.json
     
     - name: Configurer gcloud CLI
       run: |
-        gcloud auth activate-service-account --key-file=gcloud-key.json
+        gcloud auth activate-service-account --key-file=keyfile.json
         gcloud config set project cs-poc-hpzdycpiqjyvinhrczvlwcn
         gcloud auth configure-docker europe-west9-docker.pkg.dev
     
