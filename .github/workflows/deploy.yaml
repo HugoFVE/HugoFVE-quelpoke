@@ -3,7 +3,8 @@ name: Deploy Quelpoke to Kubernetes
 on:
   push:
     branches:
-      - main  # Déploie automatiquement après un push sur `main`
+      - main
+  workflow_dispatch:  # Ajout du déclencheur manuel
 
 jobs:
   build-and-deploy:
@@ -33,4 +34,3 @@ jobs:
         echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > kubeconfig.yaml
         export KUBECONFIG=kubeconfig.yaml
         kubectl apply -f kube.yaml
-
