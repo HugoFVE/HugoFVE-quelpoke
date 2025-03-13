@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quelpoke-hugof
+  namespace: hugofve  # Mets le namespace que tu as créé, ou supprime cette ligne si tu veux `default`
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quelpoke
+  template:
+    metadata:
+      labels:
+        app: quelpoke
+    spec:
+      containers:
+        - name: quelpoke-container
+          image: europe-west9-docker.pkg.dev/cs-poc-hpzdycpiqjyvinhrczvlwcn/student-hugof/quelpoke:latest # Assure-toi d’avoir bien pushé ton image sur Google Container Registry (GCR) ou Docker Hub
+          ports:
+            - containerPort: 8080  # Change si ton app écoute sur un autre port
